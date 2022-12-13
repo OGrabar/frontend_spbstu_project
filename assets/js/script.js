@@ -1,13 +1,3 @@
-let canvas = document.getElementById('canvas');
-canvas.width = window.innerWidth;
-canvas.height = 5 * window.innerHeight / 6;
-let ctx = canvas.getContext('2d');
-ctx.font = "20px serif";
-
-
-const weightsOnTable = [];
-
-
 class Scales {
     static scalePartVerticalOffset = 50;
     static scalePartHorizontalOffset = 20;
@@ -19,17 +9,17 @@ class Scales {
 
         this.leftScale = new Image();
         this.leftScale.src = "assets/img/libra-left.png";
-        this.leftWeight = [0, 0, 1];
+        this.leftWeight = [];
 
         this.rightScale = new Image();
         this.rightScale.src = "assets/img/libra-right.png";
-        this.rightWeight = [5, 5, 5];
+        this.rightWeight = [];
 
         this.weightDifference = 0;
     }
 
     calculateWeightDifference() {
-        const sum = (aggregated, next) => aggregated + next;
+        const sum = (aggregated, next) => aggregated + next.weight;
         this.weightDifference = this.leftWeight.reduce(sum, 0) - this.rightWeight.reduce(sum, 0);
     }
 
@@ -63,10 +53,15 @@ class Scales {
 class Weight {
     constructor() {
         this.weight = Math.floor(Math.random() * 5) + 1;
+
         this.bob = new Image();
         this.bob.src = "assets/img/bob-1.png";
+
         this.x = Math.floor(Math.random() * 500);
         this.y = 0;
+
+        this.isSelected = false;
+        this.isOnTable = false;
     }
 
     draw(ctx) {
@@ -77,24 +72,33 @@ class Weight {
     }
 }
 
-class WeightOnScale {
 
-}
+
+let canvas = document.getElementById('canvas');
+canvas.width = window.innerWidth;
+canvas.height = 5 * window.innerHeight / 6;
+let ctx = canvas.getContext('2d');
+ctx.font = "20px serif";
+
+let fallingWeight = new Weight();
+
+const weightsOnTable = [];
+
 
 function start() {
     const scales = new Scales();
     console.log(ctx)
     console.log(scales);
     scales.updateScales(ctx);
-    let weight = new Weight();
 
     setInterval(function () {
-        console.log(weight)
+        console.log(fallingWeight)
         scales.updateScales(ctx);
-        weight.y = weight.y + 1;
-        weight.draw(ctx);
-        if (weight.y >= canvas.height) {
-            weight = new Weight()
+        fallingWeight.y = fallingWeight.y + 1;
+        fallingWeight.draw(ctx);
+        if (fallingWeight.y >= canvas.height) {
+            fallingWeight = new Weight()
         }
+        weightsOnTable.forEach((weightOnTable) => weightOnTable.draw(ctx));
     }, 10);
 }
