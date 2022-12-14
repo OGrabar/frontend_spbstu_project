@@ -1,11 +1,27 @@
+const MAX_CANVAS_WIDTH = 1080;
+
+const canvasCoefficient = {
+    scaleSizeHorizontalCoefficient: window.innerWidth / 1440,
+    scaleSizeVerticalCoefficient: window.innerHeight / 2560,
+    update() {
+        this.scaleSizeHorizontalCoefficient = window.innerWidth / 1440;
+        this.scaleSizeVerticalCoefficient = window.innerHeight / 2560
+    }
+}
+
+
+
 class Scales {
     static scalePartVerticalOffset = 50;
     static scalePartHorizontalOffset = 20;
     static weightDifferenceCoefficient = 3;
 
     constructor() {
-        this.baseImg = new Image();
-        this.baseImg.src = "assets/img/libra-center.png";
+        this.base = {
+            baseImg: new Image();
+            baseImg.src = "assets/img/libra-center.png";
+        };
+
 
         this.leftScaleImg = new Image();
         this.leftScaleImg.src = "assets/img/libra-left.png";
@@ -55,7 +71,7 @@ class Weight {
         this.weight = Math.floor(Math.random() * 5) + 1;
 
         this.img = new Image();
-        this.img.src = "assets/img/img.png";
+        this.img.src = "assets/img/bob.png";
 
         this.x = Math.floor(Math.random() * 500);
         this.y = 0;
@@ -76,21 +92,18 @@ class Weight {
 class Table {
 //TODO weightsOnTable move here
     constructor() {
-        this.img = new Image();
-        this.img.src = "assets/img/table.png";
-
         this.weightsOnTable = [new Weight(), new Weight(), new Weight()];
     }
 
     draw(ctx) {
         ctx.beginPath();
         ctx.moveTo(ctx.canvas.width * 0.7, ctx.canvas.height - 300);
-        ctx.lineTo(ctx.canvas.width * 0.85, ctx.canvas.height - 300);
+        ctx.lineTo(ctx.canvas.width * 0.8, ctx.canvas.height - 300);
         ctx.lineWidth = 10;
         ctx.strokeStyle = '#e4b04a';
         ctx.stroke();
         this.weightsOnTable.forEach((weight, index) => {
-            weight.x = ctx.canvas.width * 0.7 + 10 + weight.height * index*2;
+            weight.x = ctx.canvas.width * 0.7 + index * 100;
             weight.y = ctx.canvas.height - 300 - weight.height;
             weight.draw(ctx)
         });
@@ -99,12 +112,11 @@ class Table {
 }
 
 let canvas = document.getElementById('canvas');
-canvas.width = window.innerWidth;
-canvas.height = 5 * window.innerHeight / 6;
 let ctx = canvas.getContext('2d');
 ctx.font = "20px serif";
 
 let fallingWeight = new Weight();
+
 
 
 function start() {
@@ -116,6 +128,9 @@ function start() {
 
 
     setInterval(function () {
+        canvas.width = window.innerWidth;
+        canvas.height = 5 * window.innerHeight / 6;
+        canvasCoefficient.update();
         console.log(fallingWeight)
         scales.updateScales(ctx);
         if (scales.weightDifference === 0 && scales.leftWeight.length > 0 && scales.rightWeight.length > 0) {
