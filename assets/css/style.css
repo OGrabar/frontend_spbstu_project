@@ -6,4 +6,6 @@
     top:0px;
     left:0px;
     height: 90vh;
+    border: 1px solid blue;
+    min-width: 1080px;
 }
