@@ -3,7 +3,7 @@ const canvasCoefficient = {
     vertical: 1,
     update(ctx) {
         this.horizontal = window.innerWidth / 2560;
-        this.vertical = window.innerHeight / 1440 ;
+        this.vertical = window.innerHeight / 1440;
     }
 }
 
@@ -194,13 +194,30 @@ ctx.font = "20px serif";
 ctx.canvas.width = 2000;
 ctx.canvas.height = 1440;
 
-let fallingWeight = new Weight();
-let weightFromTable = new Weight();
-const table = new Table();
-const scales = new Scales();
+let fallingWeight;
+let weightFromTable;
+let table;
+let scales;
 
 let win = false;
 let loose = false;
+
+const maxTime = 30 * 1000;
+let startTime = null;
+let timer = document.getElementById('timer');
+
+const maxLevel = 3;
+let level = 1;
+let levelElement = document.getElementById('level');
+
+const onceAgainButton = document.getElementById("once_again");
+
+onceAgainButton.onclick = function() {
+    startTime = null;
+    clearInterval(timerIdHolder.timerId);
+    start();
+};
+
 
 
 const mouse = {
@@ -284,7 +301,7 @@ window.onmouseup = function (e) {
             return;
         }
 
-        if (weightFromTable.x >= table.x && weightFromTable.x <= (table.x + table.width)  &&
+        if (weightFromTable.x >= table.x && weightFromTable.x <= (table.x + table.width) &&
             weightFromTable.y <= table.y * 1.5 && weightFromTable.y >= table.y * 0.5) {
             table.addWeight(weightFromTable);
             weightFromTable = new Weight();
@@ -299,18 +316,21 @@ window.onmouseup = function (e) {
 
 }
 
-
-function game() {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+function scaleCanvas(ctx) {
     canvasCoefficient.update(ctx);
     ctx.canvas.width = 2000 * canvasCoefficient.horizontal;
     ctx.canvas.height = 1440 * canvasCoefficient.vertical;
-    console.log(canvas.clientWidth);
-    scales.updateScales(ctx);
+    fallingWeight.x = fallingWeight.x * canvasCoefficient.horizontal;
+}
 
-    if (scales.weightDifference === 0 && scales.leftWeight.length > 0 && scales.rightWeight.length > 0) {
-        alert("win")
-    }
+window.onresize = function () {
+    scaleCanvas(ctx);
+}
+
+
+function game() {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    scales.updateScales(ctx);
 
     if (fallingWeight.isSelected) {
         fallingWeight.x = mouse.x - fallingWeight.width / 2;
@@ -332,10 +352,62 @@ function game() {
 
     table.draw(ctx)
 
+
+    if (scales.weightDifference === 0 && scales.leftWeight.length > 0 && scales.rightWeight.length > 0) {
+        if (level === maxLevel) {
+            //go to result
+        } else {
+            level++;
+            start();
+        }
+    }
+
+    if (scales.leftWeight.length > 3 || scales.rightWeight.length > 3) {
+        clearInterval(timerIdHolder.timerId);
+    }
+}
+
+
+function formatTime(time) {
+    let minutes = Math.floor(time / 1000 / 60);
+    let seconds = Math.floor(time / 1000 % 60);
+    return minutes + ':' + seconds;
+}
+
+function init() {
+    fallingWeight = new Weight();
+    weightFromTable = new Weight();
+    table = new Table();
+    scales = new Scales();
+    scaleCanvas(ctx);
+}
+
+let timerIdHolder = {
+    timerId: null
 }
 
 function start() {
-    setInterval(
-        () => {game()}, 5
-    )
+    init();
+    clearInterval(timerIdHolder.timerId);
+
+    timerIdHolder.timerId = setInterval(
+        () => {
+
+            if (startTime === null) {
+                startTime = Date.now()
+            }
+
+            levelElement.innerText = level.toString();
+            timer.innerText = formatTime(maxTime - (Date.now() - startTime));
+            game();
+
+            if (Date.now() - startTime >= maxTime) {
+                clearInterval(timerIdHolder.timerId);
+                timer.innerHTML = "<strong>Время вышло"
+            }
+
+
+
+        }, 20 / level);
+
 }
