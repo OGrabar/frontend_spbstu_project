@@ -1,10 +1,11 @@
+body{
+    background: #f0f4ef;
+}
 
-
-
-#canvas   {
+#canvas {
     float: left;
-    top:0px;
-    left:0px;
-    height: 90vh;
-    border: 1px solid blue;
+    top:0;
+    left:0;
+    min-width: 800px;
+    min-height: 450px;
 }
