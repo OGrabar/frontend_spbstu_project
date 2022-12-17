@@ -1,6 +1,7 @@
 import Scales from "./model/Scales.js";
 import Weight from "./model/Weight.js";
 import Table from "./model/Table.js";
+import {showModal, toggleModal} from "../util/modalUtils.js";
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
@@ -57,13 +58,47 @@ resumeTimer.onclick = function () {
     resumeGame();
 }
 
+const openRulesButton = document.getElementById('open_rules_button');
+openRulesButton.onclick = function () {
+    pauseGame();
+}
 
-const onceAgainButton = document.getElementById("once_again");
-onceAgainButton.onclick = function() {
+const closeRulesButton = document.getElementById('close_rules_button');
+closeRulesButton.onclick = function () {
+    resumeGame();
+}
+
+function playLevelOnceAgain() {
     startTime = null;
     isPaused = false;
+    loose = false;
+    win = false;
+    attemptsOnCurrentLevel++;
     start();
+}
+const onceAgainButton = document.getElementById("once_again");
+onceAgainButton.onclick = function() {
+    playLevelOnceAgain();
 };
+
+const looseModalId = '#loose_modal';
+const onceAgainButtonModal = document.getElementById('once_again_button_modal')
+onceAgainButtonModal.onclick = function () {
+    toggleModal(looseModalId);
+    playLevelOnceAgain();
+}
+
+const newGameButtonModal = document.getElementById("new_game_button_modal");
+newGameButtonModal.onclick = function () {
+    loose = false;
+    win = false;
+    level = 1;
+    currentScore = 0;
+    attemptsOnCurrentLevel = 0;
+    startTime = null;
+    toggleModal(looseModalId);
+    start();
+}
 
 const audio = document.getElementById('audio');
 const range = document.getElementById('range');
@@ -86,6 +121,10 @@ const mouse = {
     y: 0,
     down: false
 }
+
+let currentScore = 0;
+let attemptsOnCurrentLevel = 1;
+const score = document.getElementById('scores');
 
 window.onkeyup = function (e) {
     if (isPaused) { return; }
@@ -214,6 +253,8 @@ function init() {
     table = new Table();
     scales = new Scales(level);
     scaleCanvas(ctx);
+    score.innerHTML=`<strong>${currentScore}`
+    levelElement.innerText = level.toString();
 }
 
 let timerIdHolder = {
@@ -247,8 +288,9 @@ function updateFrame() {
 
     if (scales.weightDifference === 0 && scales.leftWeight.length > 0 && scales.rightWeight.length > 0) {
         if (level === maxLevel) {
-            win
+            win = true;
         } else {
+            currentScore += (Date.now() - startTime) * level / (attemptsOnCurrentLevel * 1000);
             level++;
             startTime = null;
             start();
@@ -275,10 +317,12 @@ function game() {
             }
 
             if (loose) {
-                $('#loose_modal').modal({backdrop: 'static', keyboard: false});
+                showModal(looseModalId);
             }
 
-            levelElement.innerText = level.toString();
+            if (win) {
+                alert();
+            }
         }, 30 / level);
 }
 
@@ -287,15 +331,4 @@ function start() {
     clearInterval(timerIdHolder.timerId);
     startTime = Date.now();
     game();
-}
-
-
-const openRulesButton = document.getElementById('open_rules_button');
-openRulesButton.onclick = function () {
-    pauseGame();
-}
-
-const closeRulesButton = document.getElementById('close_rules_button');
-closeRulesButton.onclick = function () {
-    resumeGame();
 }

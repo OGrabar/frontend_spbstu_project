@@ -3,7 +3,7 @@ export default class Weight {
         this.weight = Math.floor(Math.random() * (5 + level - 1)) + 1;
 
         this.img = new Image();
-        this.img.src = "assets/img/bob.png";
+        this.img.src = "../assets/img/bob.png";
 
         this.x = this.getRandomX();
         this.y = 0;

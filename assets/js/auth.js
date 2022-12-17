@@ -1,5 +1,6 @@
-const authBtn = document.getElementById('sumbit-btn');
-const form = document.getElementById('login-form');
+import {showModal, toggleModal} from "./util/modalUtils.js";
+
+const authButton = document.getElementById('sumbit-btn');
 const username = document.getElementById('name');
 
 const userExistModalId = '#user_exist_modal';
@@ -14,19 +15,16 @@ sameUserButton.onclick = () => {
         `${JSON.stringify(userDataParsed)}`
     );
 
-    window.location.replace('../index.html');
-
+    window.location.replace('game.html');
 }
 
 const newUserButton = document.getElementById('new_user_button')
 newUserButton.onclick = () => {
     username.value = ''
-    $(userExistModalId).modal('toggle');
+    toggleModal(userExistModalId)
 }
 
-const pathIfRequestIsSuccessful = 'index.html';
-
-authBtn.onclick = () => {
+authButton.onclick = () => {
     unauthorizedOtherUsers();
     const userData = localStorage.getItem(username.value);
     let userDataParsed = JSON.parse(userData);
@@ -41,7 +39,7 @@ authBtn.onclick = () => {
             `${JSON.stringify(userDataParsed)}`
         );
     } else {
-        $(userExistModalId).modal({backdrop: 'static', keyboard: false});
+        showModal(userExistModalId)
 
     }
 }

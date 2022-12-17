@@ -7,14 +7,14 @@ export default class Scales {
 
     constructor(level) {
         this.baseImg = new Image();
-        this.baseImg.src = "assets/img/libra-center.png";
+        this.baseImg.src = "../assets/img/libra-center.png";
         this.baseImgWidth = 0;
         this.baseImgHeight = 0;
         this.baseImgX = 0;
         this.baseImgY = 0;
 
         this.leftScaleImg = new Image();
-        this.leftScaleImg.src = "assets/img/libra-left.png";
+        this.leftScaleImg.src = "../assets/img/libra-left.png";
         this.leftScaleX = 0;
         this.leftScaleY = 0;
         this.leftWeight = [new Weight(level)];
@@ -22,7 +22,7 @@ export default class Scales {
         this.rightScaleImg = new Image();
         this.rightScaleX = 0;
         this.rightScaleY = 0;
-        this.rightScaleImg.src = "assets/img/libra-right.png";
+        this.rightScaleImg.src = "../assets/img/libra-right.png";
         let weight = new Weight(level);
         while (this.leftWeight[0].weight === weight.weight) {
             weight = new Weight(level);

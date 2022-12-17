@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" id ="theme" href='assets/css/style.css'/>
+    <link rel="stylesheet" id ="theme" href='../assets/css/style.css'/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
@@ -23,11 +23,14 @@
     <div class="block"><a>Таймер</a>
         <div id="timer">0:00</div>
     </div>
+    <div class="block"><a>Очки</a>
+        <div id="scores">0</div>
+    </div>
     <div class="block"><input type="button" id = 'once_again' class="button" value="Еще раз"></div>
     <div class="block"><input type="button" id = 'pause_timer' class="button" value="Pause"></div>
     <div class="block"><input type="button" id = 'resume_timer' class="button" value="Resume"></div>
     <audio id="audio"  style="display: none;" controls>
-        <source src="assets/audio/music.mp3" type="audio/mpeg">
+        <source src="../assets/audio/music.mp3" type="audio/mpeg">
     </audio>
     <span><input id="range" min="0" max="100" value="0" type="range">&#127925</span>
 
@@ -67,16 +70,16 @@
                 Попобробуй еще раз!!!
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Начать заново игру</button>
-                <button type="button" class="btn btn-primary">Начать заново уровень</button>
-                <button type="button" class="btn btn-primary">Другой игрок</button>
+                <button id="new_game_button_modal" type="button" class="btn btn-primary" data-bs-dismiss="modal">Начать заново игру</button>
+                <button id="once_again_button_modal" type="button" class="btn btn-primary">Начать заново уровень</button>
+                <button id="new_player_button_modal" type="button" class="btn btn-primary">Другой игрок</button>
             </div>
         </div>
     </div>
 </div>
 
 
-<script type="module" src="assets/js/game/game.js"></script>
+<script type="module" src="../assets/js/game/game.js"></script>
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
