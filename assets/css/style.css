@@ -9,3 +9,17 @@ body{
     top:0;
     left:0;
 }
+
+.menu_container {
+    display: flex;
+    flex-direction: column;
+}
+
+.block {
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.container {
+    display: flex;
+}
