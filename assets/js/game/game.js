@@ -2,6 +2,7 @@ import Scales from "./model/Scales.js";
 import Weight from "./model/Weight.js";
 import Table from "./model/Table.js";
 import {showModal, toggleModal} from "../util/modalUtils.js";
+import {getCurrentUserName, unauthorizedOtherUsers} from "../util/authUtils.js";
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
@@ -18,8 +19,19 @@ const canvasCoefficient = {
     }
 }
 
+const user = document.getElementById('user');
+const userName = getCurrentUserName();
+const userData = localStorage.getItem(userName);
+const userParsedData = JSON.parse(userData);
+
 const body = document.getElementById('body');
-body.onload = () => { start(); }
+body.onload = () => {
+    if(!userData) {
+        console.log(localStorage)
+        window.location.replace('login.html')
+    }
+    start();
+}
 
 const timer = document.getElementById('timer');
 const maxTime = 30 * 1000;
@@ -112,7 +124,7 @@ range.onchange = function(){
     }
 }
 
-const maxLevel = 3;
+const maxLevel = 1;
 let level = 1;
 let levelElement = document.getElementById('level');
 
@@ -125,6 +137,10 @@ const mouse = {
 let currentScore = 0;
 let attemptsOnCurrentLevel = 1;
 const score = document.getElementById('scores');
+
+window.onclose = function () {
+    unauthorizedOtherUsers();
+}
 
 window.onkeyup = function (e) {
     if (isPaused) { return; }
@@ -247,6 +263,7 @@ let scales;
 let win = false;
 let loose = false;
 
+const userTemplate = '<strong>Игрок: ';
 const levelTemplate = '<strong>Уровень: ';
 const timerTemplate = '<strong>Таймер: ';
 const scoreTemplate = '<strong>Очки: ';
@@ -257,7 +274,7 @@ function init() {
     table = new Table();
     scales = new Scales(level);
     scaleCanvas(ctx);
-    String.fo
+    user.innerHTML = userTemplate + userName;
     score.innerHTML= scoreTemplate + currentScore
     levelElement.innerHTML = levelTemplate + level;
 }
@@ -326,7 +343,9 @@ function game() {
             }
 
             if (win) {
-                alert();
+
+
+                window.location.replace('result.html');
             }
         }, 30 / level);
 }
