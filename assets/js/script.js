@@ -32,19 +32,30 @@ const formatTime = (time) => {
 const pauseTimer = document.getElementById('pause_timer');
 let timeDiff
 let isPaused = false;
-pauseTimer.onclick = function () {
+
+function pauseGame() {
+    if (isPaused) { return; }
     timeDiff = Date.now() - startTime;
     clearInterval(timerIdHolder.timerId);
     isPaused = true;
 }
 
+pauseTimer.onclick = function () {
+    pauseGame();
+}
+
 const resumeTimer = document.getElementById('resume_timer');
-resumeTimer.onclick = function () {
+
+function resumeGame() {
+    if (!isPaused) { return; }
     startTime = Date.now() - timeDiff;
     isPaused = false;
     game();
 }
 
+resumeTimer.onclick = function () {
+    resumeGame();
+}
 
 
 const onceAgainButton = document.getElementById("once_again");
@@ -272,4 +283,15 @@ function start() {
     startTime = Date.now();
 
     game();
+}
+
+
+const openRulesButton = document.getElementById('open_rules_button');
+openRulesButton.onclick = function () {
+    pauseGame();
+}
+
+const closeRulesButton = document.getElementById('close_rules_button');
+closeRulesButton.onclick = function () {
+    resumeGame();
 }

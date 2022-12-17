@@ -7,8 +7,9 @@ export default class Table {
         this.x = 0;
         this.y = 0;
         this.width = 0;
-        this.lineWitdth = 10;
+        this.lineWitdth = 3;
         this.color = '#e4b04a';
+        this.borderColor = '#265b2f';
     }
 
     draw(ctx, canvasCoefficient) {
@@ -17,11 +18,13 @@ export default class Table {
         this.y = ctx.canvas.height - 300 * canvasCoefficient.vertical;
 
         ctx.beginPath();
-        ctx.moveTo(this.x, this.y);
-        ctx.lineTo(this.x + this.width, this.y);
-        ctx.lineWidth = this.lineWitdth;
-        ctx.strokeStyle = this.color;
+        ctx.rect(this.x, this.y, this.width, 10);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.lineWitdth = this.lineWitdth;
+        ctx.strokeStyle = this.borderColor;
         ctx.stroke();
+        ctx.closePath();
 
         this.weightsOnTable.forEach((weight, index) => {
             weight.x = this.x + this.getWeightOffset(index);
