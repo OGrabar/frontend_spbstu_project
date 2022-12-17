@@ -247,14 +247,19 @@ let scales;
 let win = false;
 let loose = false;
 
+const levelTemplate = '<strong>Уровень: ';
+const timerTemplate = '<strong>Таймер: ';
+const scoreTemplate = '<strong>Очки: ';
+
 function init() {
     fallingWeight = new Weight(level);
     weightFromTable = new Weight(level);
     table = new Table();
     scales = new Scales(level);
     scaleCanvas(ctx);
-    score.innerHTML=`<strong>${currentScore}`
-    levelElement.innerText = level.toString();
+    String.fo
+    score.innerHTML= scoreTemplate + currentScore
+    levelElement.innerHTML = levelTemplate + level;
 }
 
 let timerIdHolder = {
@@ -307,12 +312,12 @@ function updateFrame() {
 function game() {
     timerIdHolder.timerId = setInterval(
         () => {
-            timer.innerText = formatTime(maxTime - (Date.now() - startTime));
+            timer.innerHTML = timerTemplate + formatTime(maxTime - (Date.now() - startTime));
             updateFrame();
 
             if (Date.now() - startTime >= maxTime) {
                 clearInterval(timerIdHolder.timerId);
-                timer.innerHTML = "<strong>Время вышло";
+                timer.innerHTML = timerTemplate + "Время вышло";
                 loose = true;
             }
 
