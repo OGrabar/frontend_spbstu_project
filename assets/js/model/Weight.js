@@ -29,7 +29,7 @@ export default class Weight {
         if (!canvasCoefficient) {
             canvasCoefficient = { horizontal: 1 }
         }
-        return Math.floor(Math.random() * 500 * canvasCoefficient.horizontal)
+        return Math.floor(Math.random() * 300 * canvasCoefficient.horizontal)
 
     }
 }

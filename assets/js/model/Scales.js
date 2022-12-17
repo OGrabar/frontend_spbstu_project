@@ -23,7 +23,11 @@ export default class Scales {
         this.rightScaleX = 0;
         this.rightScaleY = 0;
         this.rightScaleImg.src = "assets/img/libra-right.png";
-        this.rightWeight = [new Weight()];
+        let weight = new Weight();
+        while (this.leftWeight[0].weight === weight.weight) {
+            weight = new Weight();
+        }
+        this.rightWeight = [weight];
 
         this.scaleImgWidth = this.leftScaleImg.width;
         this.scaleImgHeight = this.leftScaleImg.height;

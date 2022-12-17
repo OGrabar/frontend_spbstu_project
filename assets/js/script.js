@@ -50,6 +50,7 @@ resumeTimer.onclick = function () {
 const onceAgainButton = document.getElementById("once_again");
 onceAgainButton.onclick = function() {
     startTime = null;
+    isPaused = false;
     start();
 };
 
