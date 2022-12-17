@@ -29,9 +29,27 @@ const formatTime = (time) => {
     return minutes + ':' + seconds;
 }
 
+const pauseTimer = document.getElementById('pause_timer');
+let timeDiff
+let isPaused = false;
+pauseTimer.onclick = function () {
+    timeDiff = Date.now() - startTime;
+    clearInterval(timerIdHolder.timerId);
+    isPaused = true;
+}
+
+const resumeTimer = document.getElementById('resume_timer');
+resumeTimer.onclick = function () {
+    startTime = Date.now() - timeDiff;
+    isPaused = false;
+    extracted();
+}
+
+
 
 const onceAgainButton = document.getElementById("once_again");
 onceAgainButton.onclick = function() {
+    startTime = null;
     start();
 };
 
@@ -58,18 +76,23 @@ const mouse = {
 }
 
 window.onkeyup = function (e) {
+    if (isPaused) { return; }
     if (e.code === "Space") {
         fallingWeight = new Weight();
     }
 }
 
 window.onmousemove = function (e) {
+    if (!isPaused) { return; }
+
     mouse.x = e.pageX - scrollX;
     mouse.y = e.pageY - scrollY;
 };
 
 
 window.onmousedown = function (e) {
+    if (isPaused) { return; }
+
     mouse.down = true;
 
     //click on the falling weight
@@ -92,6 +115,7 @@ window.onmousedown = function (e) {
 };
 
 window.onmouseup = function (e) {
+    if (isPaused) { return; }
     mouse.down = false;
 
     if (fallingWeight.isSelected) {
@@ -215,8 +239,7 @@ function game() {
             console.log()
         } else {
             level++;
-            setTimeout(() => {}, 2000)
-            console.log("b !!!!!!!!!!!!!!!!")
+            startTime = null;
             start();
         }
     }
@@ -226,12 +249,7 @@ function game() {
     }
 }
 
-function start() {
-    init();
-    startTime = null;
-    clearInterval(timerIdHolder.timerId);
-
-    startTime = Date.now();
+function extracted() {
     timerIdHolder.timerId = setInterval(
         () => {
             timer.innerText = formatTime(maxTime - (Date.now() - startTime));
@@ -245,4 +263,12 @@ function start() {
             levelElement.innerText = level.toString();
 
         }, 50 / level);
+}
+
+function start() {
+    init();
+    clearInterval(timerIdHolder.timerId);
+
+    startTime = Date.now();
+    extracted();
 }
