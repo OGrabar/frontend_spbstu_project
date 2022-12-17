@@ -247,8 +247,7 @@ function updateFrame() {
 
     if (scales.weightDifference === 0 && scales.leftWeight.length > 0 && scales.rightWeight.length > 0) {
         if (level === maxLevel) {
-            //TODO go to result
-            console.log()
+            win
         } else {
             level++;
             startTime = null;
@@ -256,8 +255,10 @@ function updateFrame() {
         }
     }
 
-    if (scales.leftWeight.length > 3 || scales.rightWeight.length > 3) {
+    if (scales.leftWeight.length > scales.maxWeightsOnScale|| scales.rightWeight.length > scales.maxWeightsOnScale
+        || ((scales.leftWeight.length === scales.maxWeightsOnScale ||  scales.leftWeight.length === scales.maxWeightsOnScale) && scales.weightDifference !== 0)) {
         clearInterval(timerIdHolder.timerId);
+        loose = true;
     }
 }
 
@@ -270,10 +271,14 @@ function game() {
             if (Date.now() - startTime >= maxTime) {
                 clearInterval(timerIdHolder.timerId);
                 timer.innerHTML = "<strong>Время вышло";
+                loose = true;
+            }
+
+            if (loose) {
+                $('#loose_modal').modal();
             }
 
             levelElement.innerText = level.toString();
-
         }, 50 / level);
 }
 
@@ -281,7 +286,6 @@ function start() {
     init();
     clearInterval(timerIdHolder.timerId);
     startTime = Date.now();
-
     game();
 }
 
@@ -295,3 +299,4 @@ const closeRulesButton = document.getElementById('close_rules_button');
 closeRulesButton.onclick = function () {
     resumeGame();
 }
+

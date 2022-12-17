@@ -32,6 +32,8 @@ export default class Scales {
         this.scaleImgWidth = this.leftScaleImg.width;
         this.scaleImgHeight = this.leftScaleImg.height;
 
+        this.maxWeightsOnScale = 3;
+
         this.weightOffset = 100;
 
         this.weightDifference = 0;
