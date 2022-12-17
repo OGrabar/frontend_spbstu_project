@@ -275,11 +275,11 @@ function game() {
             }
 
             if (loose) {
-                $('#loose_modal').modal();
+                $('#loose_modal').modal({backdrop: 'static', keyboard: false});
             }
 
             levelElement.innerText = level.toString();
-        }, 50 / level);
+        }, 30 / level);
 }
 
 function start() {
@@ -299,4 +299,3 @@ const closeRulesButton = document.getElementById('close_rules_button');
 closeRulesButton.onclick = function () {
     resumeGame();
 }
-
