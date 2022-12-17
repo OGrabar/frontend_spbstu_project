@@ -1,133 +1,6 @@
-const canvasCoefficient = {
-    horizontal: 1,
-    vertical: 1,
-    update(ctx) {
-        this.horizontal = window.innerWidth / 2560;
-        this.vertical = window.innerHeight / 1440;
-    }
-}
+import Scales from "./model/Scales.js";
+import Weight from "./model/Weight.js";
 
-class Scales {
-    static scalePartVerticalOffset = 50;
-    static scalePartHorizontalOffset = 20;
-    static weightDifferenceCoefficient = 3;
-
-    constructor() {
-        this.baseImg = new Image();
-        this.baseImg.src = "assets/img/libra-center.png";
-        this.baseImgWidth = 0;
-        this.baseImgHeight = 0;
-        this.baseImgX = 0;
-        this.baseImgY = 0;
-
-        this.leftScaleImg = new Image();
-        this.leftScaleImg.src = "assets/img/libra-left.png";
-        this.leftScaleX = 0;
-        this.leftScaleY = 0;
-        this.leftWeight = [];
-
-        this.rightScaleImg = new Image();
-        this.rightScaleX = 0;
-        this.rightScaleY = 0;
-        this.rightScaleImg.src = "assets/img/libra-right.png";
-        this.rightWeight = [];
-
-        this.scaleImgWidth = this.leftScaleImg.width;
-        this.scaleImgHeight = this.leftScaleImg.height;
-
-        this.weightOffset = 100;
-
-        this.weightDifference = 0;
-    }
-
-    calculateWeightDifference() {
-        const sum = (aggregated, next) => aggregated + next.weight;
-        this.weightDifference = this.leftWeight.reduce(sum, 0) - this.rightWeight.reduce(sum, 0);
-    }
-
-    drawBase(ctx) {
-        this.baseImgWidth = this.baseImg.width * canvasCoefficient.horizontal;
-        this.baseImgHeight = this.baseImg.height * canvasCoefficient.vertical;
-
-        this.baseImgX = ctx.canvas.width / 2 - this.baseImgWidth / 2;
-        this.baseImgY = ctx.canvas.height - this.baseImgHeight;
-
-        ctx.drawImage(this.baseImg, this.baseImgX, this.baseImgY, this.baseImgWidth, this.baseImgHeight);
-    }
-
-    drawLeft(ctx) {
-        this.scaleImgWidth = this.leftScaleImg.width * canvasCoefficient.horizontal;
-        this.scaleImgHeight = this.leftScaleImg.height * canvasCoefficient.vertical;
-
-        this.leftScaleX = ctx.canvas.width / 2 - this.scaleImgWidth - Scales.scalePartHorizontalOffset * canvasCoefficient.vertical;
-        this.leftScaleY = ctx.canvas.height - this.baseImgHeight + Scales.scalePartVerticalOffset * canvasCoefficient.vertical
-            + Scales.weightDifferenceCoefficient * this.weightDifference;
-
-        ctx.drawImage(this.leftScaleImg, this.leftScaleX, this.leftScaleY, this.scaleImgWidth, this.scaleImgHeight);
-
-        this.leftWeight.forEach((weight, index) => {
-            weight.x = this.leftScaleX + index * this.weightOffset * canvasCoefficient.horizontal;
-            weight.y = this.leftScaleY - weight.height - 10;
-            weight.draw(ctx);
-        });
-    }
-
-    drawRight(ctx) {
-        this.scaleImgWidth = this.rightScaleImg.width * canvasCoefficient.horizontal;
-        this.scaleImgHeight = this.rightScaleImg.height * canvasCoefficient.vertical;
-
-        this.rightScaleX = ctx.canvas.width / 2 + Scales.scalePartHorizontalOffset * canvasCoefficient.horizontal;
-        this.rightScaleY = ctx.canvas.height - this.baseImgHeight + Scales.scalePartVerticalOffset * canvasCoefficient.vertical
-            - Scales.weightDifferenceCoefficient * this.weightDifference;
-
-        ctx.drawImage(this.rightScaleImg, this.rightScaleX, this.rightScaleY, this.scaleImgWidth, this.scaleImgHeight);
-
-        this.rightWeight.forEach((weight, index) => {
-            weight.x = this.rightScaleX + index * this.weightOffset * canvasCoefficient.horizontal;
-            weight.y = this.rightScaleY - weight.height - 10;
-            weight.draw(ctx);
-        });
-    }
-
-    updateScales(ctx) {
-        this.calculateWeightDifference();
-        this.drawBase(ctx);
-        this.drawLeft(ctx);
-        this.drawRight(ctx);
-    }
-}
-
-class Weight {
-    constructor() {
-        this.weight = Math.floor(Math.random() * 5) + 1;
-
-        this.img = new Image();
-        this.img.src = "assets/img/bob.png";
-
-        this.x = this.getRandomX();
-        this.y = 0;
-
-        this.width = 0;
-        this.height = 0;
-
-        this.isSelected = false;
-    }
-
-    draw(ctx) {
-        this.updateWidthAndHeight();
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-        ctx.fillText(this.weight.toString(), this.x + (this.width / 2 - 5), this.y + (this.height - 10));
-    }
-
-    updateWidthAndHeight() {
-        this.width = canvasCoefficient.horizontal * (this.img.width + this.img.width * this.weight * 0.1) / 2;
-        this.height = canvasCoefficient.vertical * (this.img.height + this.img.height * this.weight * 0.1) / 2;
-    }
-
-    getRandomX() {
-        return Math.floor(Math.random() * 500 * canvasCoefficient.horizontal);
-    }
-}
 
 class Table {
     constructor() {
@@ -157,7 +30,7 @@ class Table {
         this.weightsOnTable.forEach((weight, index) => {
             weight.x = this.x + this.getWeightOffset(index);
             weight.y = this.y - weight.height;
-            weight.draw(ctx)
+            weight.draw(ctx, canvasCoefficient)
         });
     }
 
@@ -194,6 +67,15 @@ ctx.font = "20px serif";
 ctx.canvas.width = 2000;
 ctx.canvas.height = 1440;
 
+const canvasCoefficient = {
+    horizontal: 1,
+    vertical: 1,
+    update() {
+        this.horizontal = window.innerWidth / 2560;
+        this.vertical = window.innerHeight / 1440;
+    }
+}
+
 let fallingWeight;
 let weightFromTable;
 let table;
@@ -213,11 +95,32 @@ let levelElement = document.getElementById('level');
 const onceAgainButton = document.getElementById("once_again");
 
 onceAgainButton.onclick = function() {
-    startTime = null;
-    clearInterval(timerIdHolder.timerId);
     start();
 };
 
+const audio = document.getElementById('audio');
+const range = document.getElementById('range');
+
+range.onchange = function(){
+    if (this.value === this.min){
+        audio.volume = 0;
+        audio.pause();
+    } else {
+        audio.play();
+        audio.volume = this.value / 100;
+    }
+}
+
+const body = document.getElementById('body');
+
+body.onload = () => { start(); }
+
+
+window.onkeyup = function (e) {
+    if (e.code === "Space") {
+        fallingWeight = new Weight();
+    }
+}
 
 
 const mouse = {
@@ -316,21 +219,23 @@ window.onmouseup = function (e) {
 
 }
 
-function scaleCanvas(ctx) {
-    canvasCoefficient.update(ctx);
+function scaleCanvas() {
+    canvasCoefficient.update();
     ctx.canvas.width = 2000 * canvasCoefficient.horizontal;
     ctx.canvas.height = 1440 * canvasCoefficient.vertical;
     fallingWeight.x = fallingWeight.x * canvasCoefficient.horizontal;
 }
 
 window.onresize = function () {
-    scaleCanvas(ctx);
+    scaleCanvas();
+    game();
 }
+
 
 
 function game() {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    scales.updateScales(ctx);
+    scales.updateScales(ctx, canvasCoefficient);
 
     if (fallingWeight.isSelected) {
         fallingWeight.x = mouse.x - fallingWeight.width / 2;
@@ -338,12 +243,12 @@ function game() {
     } else {
         fallingWeight.y = fallingWeight.y + 1;
     }
-    fallingWeight.draw(ctx);
+    fallingWeight.draw(ctx, canvasCoefficient);
 
     if (weightFromTable.isSelected) {
         weightFromTable.x = mouse.x - weightFromTable.width / 2;
         weightFromTable.y = mouse.y - weightFromTable.height / 2;
-        weightFromTable.draw(ctx);
+        weightFromTable.draw(ctx, canvasCoefficient);
     }
 
     if (fallingWeight.y >= ctx.canvas.height - fallingWeight.height / 2) {
@@ -355,7 +260,7 @@ function game() {
 
     if (scales.weightDifference === 0 && scales.leftWeight.length > 0 && scales.rightWeight.length > 0) {
         if (level === maxLevel) {
-            //go to result
+            //TODO go to result
         } else {
             level++;
             start();
@@ -388,6 +293,7 @@ let timerIdHolder = {
 
 function start() {
     init();
+    startTime = null;
     clearInterval(timerIdHolder.timerId);
 
     timerIdHolder.timerId = setInterval(
@@ -403,11 +309,11 @@ function start() {
 
             if (Date.now() - startTime >= maxTime) {
                 clearInterval(timerIdHolder.timerId);
-                timer.innerHTML = "<strong>Время вышло"
+                timer.innerHTML = "<strong>Время вышло";
             }
 
-
-
-        }, 20 / level);
-
+        }, 50 / level);
 }
+
+
+

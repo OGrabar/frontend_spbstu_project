@@ -3,9 +3,9 @@ body{
 }
 
 #canvas {
+    background: whitesmoke;
+    border-right: black solid 1px;
     float: left;
     top:0;
     left:0;
-    min-width: 800px;
-    min-height: 450px;
 }
