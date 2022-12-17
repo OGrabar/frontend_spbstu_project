@@ -90,7 +90,7 @@ const mouse = {
 window.onkeyup = function (e) {
     if (isPaused) { return; }
     if (e.code === "Space") {
-        fallingWeight = new Weight();
+        fallingWeight = new Weight(level);
     }
 }
 
@@ -134,21 +134,21 @@ window.onmouseup = function (e) {
         if (fallingWeight.x >= scales.leftScaleX * 0.9 && fallingWeight.x <= scales.leftScaleX + scales.scaleImgWidth &&
             fallingWeight.y <= scales.baseImgY * 1.5 && fallingWeight.y >= scales.baseImgY * 0.5) {
             scales.leftWeight.push(fallingWeight);
-            fallingWeight = new Weight();
+            fallingWeight = new Weight(level);
             return;
         }
 
         if (fallingWeight.x >= scales.rightScaleX * 0.9 && fallingWeight.x <= scales.rightScaleX + scales.scaleImgWidth &&
             fallingWeight.y <= scales.baseImgY * 1.5 && fallingWeight.y >= scales.baseImgY * 0.5) {
             scales.rightWeight.push(fallingWeight);
-            fallingWeight = new Weight();
+            fallingWeight = new Weight(level);
             return;
         }
 
         if (fallingWeight.x >= table.x * 0.9 && fallingWeight.x <= (table.x + table.width) * 1.1 &&
             fallingWeight.y <= table.y * 1.5 && fallingWeight.y >= table.y * 0.5) {
             table.addWeight(fallingWeight);
-            fallingWeight = new Weight();
+            fallingWeight = new Weight(level);
             return;
         }
 
@@ -162,26 +162,26 @@ window.onmouseup = function (e) {
         if (weightFromTable.x >= scales.leftScaleX * 0.9 && weightFromTable.x <= scales.leftScaleX + scales.scaleImgWidth &&
             weightFromTable.y <= scales.baseImgY * 1.5 && weightFromTable.y >= scales.baseImgY * 0.5) {
             scales.leftWeight.push(weightFromTable);
-            weightFromTable = new Weight();
+            weightFromTable = new Weight(level);
             return;
         }
 
         if (weightFromTable.x >= scales.rightScaleX * 0.9 && weightFromTable.x <= scales.rightScaleX + scales.scaleImgWidth &&
             weightFromTable.y <= scales.baseImgY * 1.5 && weightFromTable.y >= scales.baseImgY * 0.5) {
             scales.rightWeight.push(weightFromTable);
-            weightFromTable = new Weight();
+            weightFromTable = new Weight(level);
             return;
         }
 
         if (weightFromTable.x >= table.x && weightFromTable.x <= (table.x + table.width) &&
             weightFromTable.y <= table.y * 1.5 && weightFromTable.y >= table.y * 0.5) {
             table.addWeight(weightFromTable);
-            weightFromTable = new Weight();
+            weightFromTable = new Weight(level);
             return;
         }
 
         if (weightFromTable.x <= scales.leftScaleX || weightFromTable.x > table.x + table.width * 1.1) {
-            weightFromTable = new Weight();
+            weightFromTable = new Weight(level);
             return;
         }
     }
@@ -209,10 +209,10 @@ let win = false;
 let loose = false;
 
 function init() {
-    fallingWeight = new Weight();
-    weightFromTable = new Weight();
+    fallingWeight = new Weight(level);
+    weightFromTable = new Weight(level);
     table = new Table();
-    scales = new Scales();
+    scales = new Scales(level);
     scaleCanvas(ctx);
 }
 
@@ -239,7 +239,7 @@ function updateFrame() {
     }
 
     if (fallingWeight.y >= ctx.canvas.height - fallingWeight.height / 2) {
-        fallingWeight = new Weight();
+        fallingWeight = new Weight(level);
     }
 
     table.draw(ctx, canvasCoefficient)

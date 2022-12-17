@@ -1,6 +1,6 @@
 export default class Weight {
-    constructor() {
-        this.weight = Math.floor(Math.random() * (5 - 1)) + 1;
+    constructor(level) {
+        this.weight = Math.floor(Math.random() * (5 + level - 1)) + 1;
 
         this.img = new Image();
         this.img.src = "assets/img/bob.png";

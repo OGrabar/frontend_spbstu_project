@@ -3,9 +3,9 @@ import Weight from "./Weight.js";
 export default class Scales {
     static scalePartVerticalOffset = 50;
     static scalePartHorizontalOffset = 20;
-    static weightDifferenceCoefficient = 3;
+    static weightDifferenceCoefficient = 2;
 
-    constructor() {
+    constructor(level) {
         this.baseImg = new Image();
         this.baseImg.src = "assets/img/libra-center.png";
         this.baseImgWidth = 0;
@@ -17,15 +17,15 @@ export default class Scales {
         this.leftScaleImg.src = "assets/img/libra-left.png";
         this.leftScaleX = 0;
         this.leftScaleY = 0;
-        this.leftWeight = [new Weight()];
+        this.leftWeight = [new Weight(level)];
 
         this.rightScaleImg = new Image();
         this.rightScaleX = 0;
         this.rightScaleY = 0;
         this.rightScaleImg.src = "assets/img/libra-right.png";
-        let weight = new Weight();
+        let weight = new Weight(level);
         while (this.leftWeight[0].weight === weight.weight) {
-            weight = new Weight();
+            weight = new Weight(level);
         }
         this.rightWeight = [weight];
 
