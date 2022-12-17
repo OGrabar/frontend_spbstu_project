@@ -309,10 +309,10 @@ function updateFrame() {
 
 
     if (scales.weightDifference === 0 && scales.leftWeight.length > 0 && scales.rightWeight.length > 0) {
+        currentScore += (Date.now() - startTime) * level / (attemptsOnCurrentLevel * 1000);
         if (level === maxLevel) {
             win = true;
         } else {
-            currentScore += (Date.now() - startTime) * level / (attemptsOnCurrentLevel * 1000);
             level++;
             startTime = null;
             start();
@@ -343,8 +343,11 @@ function game() {
             }
 
             if (win) {
-
-
+                if (!userParsedData.maxScore || userParsedData.maxScore < currentScore) {
+                    userParsedData.maxScore = currentScore;
+                }
+                userParsedData.lastScore = currentScore;
+                localStorage.setItem(userName, JSON.stringify(userParsedData))
                 window.location.replace('result.html');
             }
         }, 30 / level);

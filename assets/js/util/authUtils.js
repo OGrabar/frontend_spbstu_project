@@ -23,13 +23,13 @@ export function unauthorizedOtherUsers() {
     }
 }
 
-export function authUser() {
+export function authUser(username) {
     let userDataParsed = {
         'authorized': true
     }
 
     localStorage.setItem(
-        `${username.value}`,
+        `${username}`,
         `${JSON.stringify(userDataParsed)}`
     );
 

@@ -23,7 +23,7 @@ authButton.onclick = () => {
     let userDataParsed = JSON.parse(userData);
 
     if (userDataParsed == null) {
-        authUser();
+        authUser(username.value);
     } else {
         showModal(userExistModalId)
     }
