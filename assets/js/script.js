@@ -42,7 +42,7 @@ const resumeTimer = document.getElementById('resume_timer');
 resumeTimer.onclick = function () {
     startTime = Date.now() - timeDiff;
     isPaused = false;
-    extracted();
+    game();
 }
 
 
@@ -83,7 +83,7 @@ window.onkeyup = function (e) {
 }
 
 window.onmousemove = function (e) {
-    if (!isPaused) { return; }
+    if (isPaused) { return; }
 
     mouse.x = e.pageX - scrollX;
     mouse.y = e.pageY - scrollY;
@@ -185,7 +185,7 @@ function scaleCanvas() {
 
 window.onresize = function () {
     scaleCanvas();
-    game();
+    updateFrame();
 }
 
 let fallingWeight;
@@ -208,7 +208,7 @@ let timerIdHolder = {
     timerId: null
 }
 
-function game() {
+function updateFrame() {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     scales.updateScales(ctx, canvasCoefficient);
 
@@ -249,11 +249,11 @@ function game() {
     }
 }
 
-function extracted() {
+function game() {
     timerIdHolder.timerId = setInterval(
         () => {
             timer.innerText = formatTime(maxTime - (Date.now() - startTime));
-            game();
+            updateFrame();
 
             if (Date.now() - startTime >= maxTime) {
                 clearInterval(timerIdHolder.timerId);
@@ -268,7 +268,7 @@ function extracted() {
 function start() {
     init();
     clearInterval(timerIdHolder.timerId);
-
     startTime = Date.now();
-    extracted();
+
+    game();
 }
