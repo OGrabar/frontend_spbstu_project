@@ -58,6 +58,13 @@
             Правила
         </button>
     </div>
+
+    <div class="block">
+        <button type="button" id="game_over_button" class="btn btn-danger" data-toggle="modal"
+                data-target="#rules_modal">
+            Завершить игру
+        </button>
+    </div>
 </div>
 
 <div class="modal fade" id="rules_modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -87,12 +94,32 @@
                 Попобробуй еще раз!!!
             </div>
             <div class="modal-footer">
-                <button id="new_game_button_modal" type="button" class="btn btn-primary" data-bs-dismiss="modal">Начать
+                <button id="game_over_button_loose_modal" type="button" class="btn btn-danger">Завершить игру</button>
+                <button id="new_game_button_loose_modal" type="button" class="btn btn-primary" data-bs-dismiss="modal">Начать
                     заново игру
                 </button>
-                <button id="once_again_button_modal" type="button" class="btn btn-primary">Начать заново уровень
+                <button id="once_again_button_loose_modal" type="button" class="btn btn-primary">Начать заново уровень
                 </button>
-                <button id="new_player_button_modal" type="button" class="btn btn-primary">Другой игрок</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="win_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Выигрыш</h5>
+            </div>
+            <div id='win-modal-body' class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button id="game_over_button_win_modal" type="button" class="btn btn-danger">Завершить игру</button>
+                <button id="new_game_button_win_modal" type="button" class="btn btn-primary" data-bs-dismiss="modal">Начать
+                    заново игру
+                </button>
+                <button id="results_button_win_modal" type="button" class="btn btn-primary">К результатам
+                </button>
             </div>
         </div>
     </div>

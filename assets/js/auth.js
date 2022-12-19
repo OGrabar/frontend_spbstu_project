@@ -7,8 +7,8 @@ const username = document.getElementById('name');
 const userExistModalId = '#user_exist_modal';
 const sameUserButton = document.getElementById('same_user_button')
 
-sameUserButton.onclick = () => {
-    authUser();
+sameUserButton.onclick = function () {
+    authUser(username.value);
 }
 
 const newUserButton = document.getElementById('new_user_button')

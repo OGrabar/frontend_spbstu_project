@@ -2,7 +2,7 @@ import Scales from "./model/Scales.js";
 import Weight from "./model/Weight.js";
 import Table from "./model/Table.js";
 import {showModal, toggleModal} from "../util/modalUtils.js";
-import {getCurrentUserName, unauthorizedOtherUsers} from "../util/authUtils.js";
+import {getCurrentUserName, unauthorizedOtherUsers, unauthorizedUser} from "../util/authUtils.js";
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
@@ -25,10 +25,21 @@ const userData = localStorage.getItem(userName);
 const userParsedData = JSON.parse(userData);
 
 const body = document.getElementById('body');
+
+function goToLogin() {
+    unauthorizedUser(userName);
+    window.location.replace('login.html')
+}
+
+function goToResults() {
+    unauthorizedUser(userName);
+    window.location.replace('results.html')
+}
+
+
 body.onload = () => {
     if(!userData) {
-        console.log(localStorage)
-        window.location.replace('login.html')
+        goToLogin();
     }
     start();
 }
@@ -80,6 +91,11 @@ closeRulesButton.onclick = function () {
     resumeGame();
 }
 
+const gameOverButton = document.getElementById('game_over_button');
+gameOverButton.onclick = function () {
+    goToLogin();
+}
+
 function playLevelOnceAgain() {
     startTime = null;
     isPaused = false;
@@ -88,28 +104,64 @@ function playLevelOnceAgain() {
     attemptsOnCurrentLevel++;
     start();
 }
-const onceAgainButton = document.getElementById("once_again");
-onceAgainButton.onclick = function() {
-    playLevelOnceAgain();
-};
 
-const looseModalId = '#loose_modal';
-const onceAgainButtonModal = document.getElementById('once_again_button_modal')
-onceAgainButtonModal.onclick = function () {
-    toggleModal(looseModalId);
-    playLevelOnceAgain();
-}
-
-const newGameButtonModal = document.getElementById("new_game_button_modal");
-newGameButtonModal.onclick = function () {
+function newGame() {
     loose = false;
     win = false;
     level = 1;
     currentScore = 0;
     attemptsOnCurrentLevel = 0;
     startTime = null;
-    toggleModal(looseModalId);
+    isPaused = false;
     start();
+}
+
+const onceAgainButton = document.getElementById("once_again");
+onceAgainButton.onclick = function() {
+    playLevelOnceAgain();
+};
+
+const looseModalId = '#loose_modal';
+const onceAgainButtonLooseModal = document.getElementById('once_again_button_loose_modal')
+onceAgainButtonLooseModal.onclick = function () {
+    toggleModal(looseModalId);
+    playLevelOnceAgain();
+}
+
+const newGameButtonLooseModal = document.getElementById("new_game_button_loose_modal");
+newGameButtonLooseModal.onclick = function () {
+    toggleModal(looseModalId);
+    newGame();
+}
+
+const gameOverButtonLoseModal = document.getElementById('game_over_button_loose_modal');
+gameOverButtonLoseModal.onclick = function () {
+    toggleModal(looseModalId);
+    goToLogin();
+}
+
+const winModalId = '#win_modal';
+const gameOverButtonWinModal = document.getElementById('game_over_button_win_modal')
+gameOverButtonWinModal.onclick = function () {
+    toggleModal(winModalId);
+    goToLogin();
+}
+
+const newGameButtonWinModal = document.getElementById("new_game_button_win_modal");
+newGameButtonWinModal.onclick = function () {
+    toggleModal(winModalId);
+    newGame();
+}
+
+const resultsButtonWinModal = document.getElementById("results_button_win_modal")
+resultsButtonWinModal.onclick = function () {
+    toggleModal(winModalId);
+    goToResults();
+}
+
+const winModalResult = document.getElementById('win-modal-body');
+function setResultToModalBody () {
+    winModalResult.innerText = `Ваш результат: ${currentScore}`;
 }
 
 const audio = document.getElementById('audio');
@@ -247,7 +299,9 @@ function scaleCanvas() {
     canvasCoefficient.update();
     ctx.canvas.width = 2000 * canvasCoefficient.horizontal;
     ctx.canvas.height = 1440 * canvasCoefficient.vertical;
-    fallingWeight.x = fallingWeight.x * canvasCoefficient.horizontal;
+    if (fallingWeight) {
+        fallingWeight.x = fallingWeight.x * canvasCoefficient.horizontal;
+    }
 }
 
 window.onresize = function () {
@@ -309,9 +363,10 @@ function updateFrame() {
 
 
     if (scales.weightDifference === 0 && scales.leftWeight.length > 0 && scales.rightWeight.length > 0) {
-        currentScore += (Date.now() - startTime) * level / (attemptsOnCurrentLevel * 1000);
+        currentScore += (maxTime - (Date.now() - startTime)) / attemptsOnCurrentLevel;
         if (level === maxLevel) {
             win = true;
+            return;
         } else {
             level++;
             startTime = null;
@@ -343,12 +398,15 @@ function game() {
             }
 
             if (win) {
+                pauseGame();
                 if (!userParsedData.maxScore || userParsedData.maxScore < currentScore) {
                     userParsedData.maxScore = currentScore;
                 }
                 userParsedData.lastScore = currentScore;
-                localStorage.setItem(userName, JSON.stringify(userParsedData))
-                window.location.replace('result.html');
+                localStorage.setItem(userName, JSON.stringify(userParsedData));
+                console.log(userName);
+                setResultToModalBody();
+                showModal(winModalId)
             }
         }, 30 / level);
 }
