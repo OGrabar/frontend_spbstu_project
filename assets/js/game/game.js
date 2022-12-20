@@ -1,4 +1,4 @@
-import Scales from "./model/Scales.js";
+ import Scales from "./model/Scales.js";
 import Weight from "./model/Weight.js";
 import Table from "./model/Table.js";
 import {showModal, toggleModal} from "../util/modalUtils.js";
