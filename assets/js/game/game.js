@@ -33,7 +33,7 @@ function goToLogin() {
 
 function goToResults() {
     unauthorizedUser(userName);
-    window.location.replace('results.html')
+    window.location.replace('results.html?username=' + userName);
 }
 
 
