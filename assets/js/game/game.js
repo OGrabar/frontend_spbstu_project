@@ -1,6 +1,8 @@
-import Scales from "./model/Scales.js";
+ import Scales from "./model/Scales.js";
 import Weight from "./model/Weight.js";
 import Table from "./model/Table.js";
+import {showModal, toggleModal} from "../util/modalUtils.js";
+import {getCurrentUserName, unauthorizedOtherUsers, unauthorizedUser} from "../util/authUtils.js";
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
@@ -17,8 +19,30 @@ const canvasCoefficient = {
     }
 }
 
+const user = document.getElementById('user');
+const userName = getCurrentUserName();
+const userData = localStorage.getItem(userName);
+const userParsedData = JSON.parse(userData);
+
 const body = document.getElementById('body');
-body.onload = () => { start(); }
+
+function goToLogin() {
+    unauthorizedUser(userName);
+    window.location.replace('login.html')
+}
+
+function goToResults() {
+    unauthorizedUser(userName);
+    window.location.replace('results.html?username=' + userName);
+}
+
+
+body.onload = () => {
+    if(!userData) {
+        goToLogin();
+    }
+    start();
+}
 
 const timer = document.getElementById('timer');
 const maxTime = 30 * 1000;
@@ -57,13 +81,88 @@ resumeTimer.onclick = function () {
     resumeGame();
 }
 
+const openRulesButton = document.getElementById('open_rules_button');
+openRulesButton.onclick = function () {
+    pauseGame();
+}
 
-const onceAgainButton = document.getElementById("once_again");
-onceAgainButton.onclick = function() {
+const closeRulesButton = document.getElementById('close_rules_button');
+closeRulesButton.onclick = function () {
+    resumeGame();
+}
+
+const gameOverButton = document.getElementById('game_over_button');
+gameOverButton.onclick = function () {
+    goToLogin();
+}
+
+function playLevelOnceAgain() {
+    startTime = null;
+    isPaused = false;
+    loose = false;
+    win = false;
+    attemptsOnCurrentLevel++;
+    start();
+}
+
+function newGame() {
+    loose = false;
+    win = false;
+    level = 1;
+    currentScore = 0;
+    attemptsOnCurrentLevel = 0;
     startTime = null;
     isPaused = false;
     start();
+}
+
+const onceAgainButton = document.getElementById("once_again");
+onceAgainButton.onclick = function() {
+    playLevelOnceAgain();
 };
+
+const looseModalId = '#loose_modal';
+const onceAgainButtonLooseModal = document.getElementById('once_again_button_loose_modal')
+onceAgainButtonLooseModal.onclick = function () {
+    toggleModal(looseModalId);
+    playLevelOnceAgain();
+}
+
+const newGameButtonLooseModal = document.getElementById("new_game_button_loose_modal");
+newGameButtonLooseModal.onclick = function () {
+    toggleModal(looseModalId);
+    newGame();
+}
+
+const gameOverButtonLoseModal = document.getElementById('game_over_button_loose_modal');
+gameOverButtonLoseModal.onclick = function () {
+    toggleModal(looseModalId);
+    goToLogin();
+}
+
+const winModalId = '#win_modal';
+const gameOverButtonWinModal = document.getElementById('game_over_button_win_modal')
+gameOverButtonWinModal.onclick = function () {
+    toggleModal(winModalId);
+    goToLogin();
+}
+
+const newGameButtonWinModal = document.getElementById("new_game_button_win_modal");
+newGameButtonWinModal.onclick = function () {
+    toggleModal(winModalId);
+    newGame();
+}
+
+const resultsButtonWinModal = document.getElementById("results_button_win_modal")
+resultsButtonWinModal.onclick = function () {
+    toggleModal(winModalId);
+    goToResults();
+}
+
+const winModalResult = document.getElementById('win-modal-body');
+function setResultToModalBody () {
+    winModalResult.innerText = `Ваш результат: ${currentScore}`;
+}
 
 const audio = document.getElementById('audio');
 const range = document.getElementById('range');
@@ -85,6 +184,14 @@ const mouse = {
     x: 0,
     y: 0,
     down: false
+}
+
+let currentScore = 0;
+let attemptsOnCurrentLevel = 1;
+const score = document.getElementById('scores');
+
+window.onclose = function () {
+    unauthorizedOtherUsers();
 }
 
 window.onkeyup = function (e) {
@@ -192,7 +299,9 @@ function scaleCanvas() {
     canvasCoefficient.update();
     ctx.canvas.width = 2000 * canvasCoefficient.horizontal;
     ctx.canvas.height = 1440 * canvasCoefficient.vertical;
-    fallingWeight.x = fallingWeight.x * canvasCoefficient.horizontal;
+    if (fallingWeight) {
+        fallingWeight.x = fallingWeight.x * canvasCoefficient.horizontal;
+    }
 }
 
 window.onresize = function () {
@@ -208,12 +317,20 @@ let scales;
 let win = false;
 let loose = false;
 
+const userTemplate = '<strong>Игрок: ';
+const levelTemplate = '<strong>Уровень: ';
+const timerTemplate = '<strong>Таймер: ';
+const scoreTemplate = '<strong>Очки: ';
+
 function init() {
     fallingWeight = new Weight(level);
     weightFromTable = new Weight(level);
     table = new Table();
     scales = new Scales(level);
     scaleCanvas(ctx);
+    user.innerHTML = userTemplate + userName;
+    score.innerHTML= scoreTemplate + currentScore
+    levelElement.innerHTML = levelTemplate + level;
 }
 
 let timerIdHolder = {
@@ -246,8 +363,10 @@ function updateFrame() {
 
 
     if (scales.weightDifference === 0 && scales.leftWeight.length > 0 && scales.rightWeight.length > 0) {
+        currentScore += (maxTime - (Date.now() - startTime)) / attemptsOnCurrentLevel;
         if (level === maxLevel) {
-            win
+            win = true;
+            return;
         } else {
             level++;
             startTime = null;
@@ -265,20 +384,30 @@ function updateFrame() {
 function game() {
     timerIdHolder.timerId = setInterval(
         () => {
-            timer.innerText = formatTime(maxTime - (Date.now() - startTime));
+            timer.innerHTML = timerTemplate + formatTime(maxTime - (Date.now() - startTime));
             updateFrame();
 
             if (Date.now() - startTime >= maxTime) {
                 clearInterval(timerIdHolder.timerId);
-                timer.innerHTML = "<strong>Время вышло";
+                timer.innerHTML = timerTemplate + "Время вышло";
                 loose = true;
             }
 
             if (loose) {
-                $('#loose_modal').modal({backdrop: 'static', keyboard: false});
+                showModal(looseModalId);
             }
 
-            levelElement.innerText = level.toString();
+            if (win) {
+                pauseGame();
+                if (!userParsedData.maxScore || userParsedData.maxScore < currentScore) {
+                    userParsedData.maxScore = currentScore;
+                }
+                userParsedData.lastScore = currentScore;
+                localStorage.setItem(userName, JSON.stringify(userParsedData));
+                console.log(userName);
+                setResultToModalBody();
+                showModal(winModalId)
+            }
         }, 30 / level);
 }
 
@@ -287,15 +416,4 @@ function start() {
     clearInterval(timerIdHolder.timerId);
     startTime = Date.now();
     game();
-}
-
-
-const openRulesButton = document.getElementById('open_rules_button');
-openRulesButton.onclick = function () {
-    pauseGame();
-}
-
-const closeRulesButton = document.getElementById('close_rules_button');
-closeRulesButton.onclick = function () {
-    resumeGame();
 }
