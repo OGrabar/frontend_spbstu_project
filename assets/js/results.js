@@ -1,3 +1,14 @@
+import {getAuthUserName} from "./util/authUtils.js";
+import {goToGame, goToLogin} from "./util/redirectUtils.js";
+
+const targetUsername = getAuthUserName();
+
+const gameOverButton = document.getElementById("game_over_button");
+gameOverButton.onclick = function () { goToLogin(); }
+
+const newGameButton = document.getElementById("new_game_button");
+newGameButton.onclick = function () { goToGame(targetUsername); }
+
 window.onload = () => {
     let tbody = document.getElementById('tbody');
 
@@ -7,7 +18,7 @@ window.onload = () => {
         return b - a;
     });
 
-    const targetUsername = document.location.href.split('?')[1].split('=')[1]
+
 
     for (const [username, userData] of localStorageEntries) {
         const userDataParsed = JSON.parse(userData);

@@ -1,46 +1,15 @@
-export const getCurrentUserName = () => {
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const itemString = localStorage.getItem(key);
-        let item = JSON.parse(itemString);
-        if (item.authorized) {
-            return key;
-        }
-    }
-}
-
-export function unauthorizedOtherUsers() {
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const itemString = localStorage.getItem(key);
-        let item = JSON.parse(itemString);
-        if (item.authorized) {
-            localStorage.setItem(key, JSON.stringify({authorized: false}));
-        }
-    }
-}
-
-export function unauthorizedUser(username) {
-    const userData = localStorage.getItem(username);
-    const userDataParsed = JSON.parse(userData);
-    if (userDataParsed.authorized) {
-        userDataParsed.authorized = false;
-        localStorage.setItem(username, JSON.stringify(userDataParsed));
-    }
-
-}
-
 export function authUser(username) {
     const userData = localStorage.getItem(username);
-    let userDataParsed;
-    if (userData) {
-        userDataParsed = JSON.parse(userData);
-        userDataParsed.authorized = true;
-    } else {
-        userDataParsed = { authorized: true };
+
+    if (!userData) {
+        const userDataParsed = {
+            maxScore: 0,
+            lastScore: 0
+        };
+        localStorage.setItem(username, JSON.stringify(userDataParsed));
     }
+}
 
-    localStorage.setItem(username, JSON.stringify(userDataParsed));
-
-    window.location.replace('game.html');
+export function getAuthUserName() {
+    return decodeURI(document.location.href.split('?')[1]).split('=')[1]
 }

@@ -2,7 +2,8 @@
 import Weight from "./model/Weight.js";
 import Table from "./model/Table.js";
 import {showModal, toggleModal} from "../util/modalUtils.js";
-import {getCurrentUserName, unauthorizedOtherUsers, unauthorizedUser} from "../util/authUtils.js";
+import {getAuthUserName} from "../util/authUtils.js";
+ import {goToLogin, goToResults} from "../util/redirectUtils.js";
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
@@ -20,25 +21,15 @@ const canvasCoefficient = {
 }
 
 const user = document.getElementById('user');
-const userName = getCurrentUserName();
+const userName = getAuthUserName();
 const userData = localStorage.getItem(userName);
 const userParsedData = JSON.parse(userData);
 
 const body = document.getElementById('body');
 
-function goToLogin() {
-    unauthorizedUser(userName);
-    window.location.replace('login.html')
-}
-
-function goToResults() {
-    unauthorizedUser(userName);
-    window.location.replace('results.html?username=' + userName);
-}
-
 
 body.onload = () => {
-    if(!userData) {
+    if(!userName) {
         goToLogin();
     }
     start();
@@ -156,7 +147,7 @@ newGameButtonWinModal.onclick = function () {
 const resultsButtonWinModal = document.getElementById("results_button_win_modal")
 resultsButtonWinModal.onclick = function () {
     toggleModal(winModalId);
-    goToResults();
+    goToResults(userName);
 }
 
 const winModalResult = document.getElementById('win-modal-body');
@@ -188,11 +179,7 @@ const mouse = {
 
 let currentScore = 0;
 let attemptsOnCurrentLevel = 1;
-const score = document.getElementById('scores');
-
-window.onclose = function () {
-    unauthorizedOtherUsers();
-}
+const score = document.getElementById('scores')
 
 window.onkeyup = function (e) {
     if (isPaused) { return; }
@@ -326,6 +313,7 @@ function init() {
     fallingWeight = new Weight(level);
     weightFromTable = new Weight(level);
     table = new Table();
+    console.log(userName);
     scales = new Scales(level);
     scaleCanvas(ctx);
     user.innerHTML = userTemplate + userName;
@@ -375,7 +363,7 @@ function updateFrame() {
     }
 
     if (scales.leftWeight.length > scales.maxWeightsOnScale|| scales.rightWeight.length > scales.maxWeightsOnScale
-        || ((scales.leftWeight.length === scales.maxWeightsOnScale ||  scales.leftWeight.length === scales.maxWeightsOnScale) && scales.weightDifference !== 0)) {
+        || ((scales.leftWeight.length === scales.maxWeightsOnScale ||  scales.rightWeight.length === scales.maxWeightsOnScale) && scales.weightDifference !== 0)) {
         clearInterval(timerIdHolder.timerId);
         loose = true;
     }
