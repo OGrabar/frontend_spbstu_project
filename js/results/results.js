@@ -1,5 +1,5 @@
-import {getAuthUserName} from "./util/authUtils.js";
-import {goToGame, goToLogin} from "./util/redirectUtils.js";
+import {getAuthUserName} from "../util/authUtils.js";
+import {goToGame, goToLogin} from "../util/redirectUtils.js";
 
 const targetUsername = getAuthUserName();
 
@@ -35,7 +35,6 @@ window.onload = () => {
         tr += `<td>${maxScore}</td>`;
         tr += `<td>${lastScore}</td>`;
         tbody.innerHTML += tr;
-
     }
 }
 

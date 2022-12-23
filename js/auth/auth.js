@@ -1,6 +1,6 @@
-import {showModal, toggleModal} from "./util/modalUtils.js";
-import {authUser} from "./util/authUtils.js";
-import {goToGame} from "./util/redirectUtils.js";
+import {showModal, toggleModal} from "../util/modalUtils.js";
+import {authUser} from "../util/authUtils.js";
+import {goToGame} from "../util/redirectUtils.js";
 
 const authButton = document.getElementById('sumbit-btn');
 const username = document.getElementById('name');
