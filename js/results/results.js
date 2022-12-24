@@ -9,16 +9,19 @@ gameOverButton.onclick = function () { goToLogin(); }
 const newGameButton = document.getElementById("new_game_button");
 newGameButton.onclick = function () { goToGame(targetUsername); }
 
-window.onload = () => {
-    let tbody = document.getElementById('tbody');
-
-    let localStorageEntries = Object.entries(localStorage).sort((a, b) => {
+function sortPlayers() {
+    return Object.entries(localStorage).sort((a, b) => {
         a = JSON.parse(a[1])['maxScore'];
         b = JSON.parse(b[1])['maxScore'];
         return b - a;
     });
+}
 
+window.onload = () => {
 
+    let tbody = document.getElementById('tbody');
+
+    let localStorageEntries = sortPlayers();
 
     for (const [username, userData] of localStorageEntries) {
         const userDataParsed = JSON.parse(userData);

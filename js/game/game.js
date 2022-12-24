@@ -1,22 +1,26 @@
- import Scales from "./model/Scales.js";
+import Scales from "./model/Scales.js";
 import Weight from "./model/Weight.js";
 import Table from "./model/Table.js";
 import {showModal, toggleModal} from "../util/modalUtils.js";
 import {getAuthUserName} from "../util/authUtils.js";
- import {goToLogin, goToResults} from "../util/redirectUtils.js";
+import {goToLogin, goToResults} from "../util/redirectUtils.js";
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 ctx.font = "20px serif";
-ctx.canvas.width = 2000;
-ctx.canvas.height = 1440;
+const canvasBaseWidth = 2000;
+const canvasBaseHeight = 1440;
+ctx.canvas.width = canvasBaseWidth;
+ctx.canvas.height = canvasBaseHeight;
 
+const windowBaseHeight = 1440;
+const windowBaseWidth = 2560;
 const canvasCoefficient = {
     horizontal: 1,
     vertical: 1,
     update() {
-        this.horizontal = window.innerWidth / 2560;
-        this.vertical = window.innerHeight / 1440;
+        this.horizontal = window.innerWidth / windowBaseWidth;
+        this.vertical = window.innerHeight / windowBaseHeight;
     }
 }
 
@@ -29,7 +33,7 @@ const body = document.getElementById('body');
 
 
 body.onload = () => {
-    if(!userName) {
+    if (!userName) {
         goToLogin();
     }
     start();
@@ -49,7 +53,9 @@ let timeDiff
 let isPaused = false;
 
 function pauseGame() {
-    if (isPaused) { return; }
+    if (isPaused) {
+        return;
+    }
     timeDiff = Date.now() - startTime;
     clearInterval(timerIdHolder.timerId);
     isPaused = true;
@@ -62,7 +68,9 @@ pauseTimer.onclick = function () {
 const resumeTimer = document.getElementById('resume_timer');
 
 function resumeGame() {
-    if (!isPaused) { return; }
+    if (!isPaused) {
+        return;
+    }
     startTime = Date.now() - timeDiff;
     isPaused = false;
     game();
@@ -108,7 +116,7 @@ function newGame() {
 }
 
 const onceAgainButton = document.getElementById("once_again");
-onceAgainButton.onclick = function() {
+onceAgainButton.onclick = function () {
     playLevelOnceAgain();
 };
 
@@ -151,14 +159,15 @@ resultsButtonWinModal.onclick = function () {
 }
 
 const winModalResult = document.getElementById('win-modal-body');
-function setResultToModalBody () {
+
+function setResultToModalBody() {
     winModalResult.innerText = `Ваш результат: ${currentScore}`;
 }
 
 const audio = document.getElementById('audio');
-const range = document.getElementById('range');
-range.onchange = function(){
-    if (this.value === this.min){
+const audioRange = document.getElementById('range');
+audioRange.onchange = function () {
+    if (this.value === this.min) {
         audio.volume = 0;
         audio.pause();
     } else {
@@ -182,14 +191,18 @@ let attemptsOnCurrentLevel = 1;
 const score = document.getElementById('scores')
 
 window.onkeyup = function (e) {
-    if (isPaused) { return; }
+    if (isPaused) {
+        return;
+    }
     if (e.code === "Space") {
         fallingWeight = new Weight(level);
     }
 }
 
 window.onmousemove = function (e) {
-    if (isPaused) { return; }
+    if (isPaused) {
+        return;
+    }
 
     mouse.x = e.pageX - scrollX;
     mouse.y = e.pageY - scrollY;
@@ -197,7 +210,9 @@ window.onmousemove = function (e) {
 
 
 window.onmousedown = function (e) {
-    if (isPaused) { return; }
+    if (isPaused) {
+        return;
+    }
 
     mouse.down = true;
 
@@ -221,7 +236,9 @@ window.onmousedown = function (e) {
 };
 
 window.onmouseup = function (e) {
-    if (isPaused) { return; }
+    if (isPaused) {
+        return;
+    }
     mouse.down = false;
 
     if (fallingWeight.isSelected) {
@@ -284,8 +301,8 @@ window.onmouseup = function (e) {
 
 function scaleCanvas() {
     canvasCoefficient.update();
-    ctx.canvas.width = 2000 * canvasCoefficient.horizontal;
-    ctx.canvas.height = 1440 * canvasCoefficient.vertical;
+    ctx.canvas.width = canvasBaseWidth * canvasCoefficient.horizontal;
+    ctx.canvas.height = canvasBaseHeight * canvasCoefficient.vertical;
     if (fallingWeight) {
         fallingWeight.x = fallingWeight.x * canvasCoefficient.horizontal;
     }
@@ -313,11 +330,10 @@ function init() {
     fallingWeight = new Weight(level);
     weightFromTable = new Weight(level);
     table = new Table();
-    console.log(userName);
     scales = new Scales(level);
     scaleCanvas(ctx);
     user.innerHTML = userTemplate + userName;
-    score.innerHTML= scoreTemplate + currentScore
+    score.innerHTML = scoreTemplate + currentScore
     levelElement.innerHTML = levelTemplate + level;
 }
 
@@ -362,8 +378,8 @@ function updateFrame() {
         }
     }
 
-    if (scales.leftWeight.length > scales.maxWeightsOnScale|| scales.rightWeight.length > scales.maxWeightsOnScale
-        || ((scales.leftWeight.length === scales.maxWeightsOnScale ||  scales.rightWeight.length === scales.maxWeightsOnScale) && scales.weightDifference !== 0)) {
+    if (scales.leftWeight.length > scales.maxWeightsOnScale || scales.rightWeight.length > scales.maxWeightsOnScale
+        || ((scales.leftWeight.length === scales.maxWeightsOnScale || scales.rightWeight.length === scales.maxWeightsOnScale) && scales.weightDifference !== 0)) {
         clearInterval(timerIdHolder.timerId);
         loose = true;
     }
@@ -392,7 +408,6 @@ function game() {
                 }
                 userParsedData.lastScore = currentScore;
                 localStorage.setItem(userName, JSON.stringify(userParsedData));
-                console.log(userName);
                 setResultToModalBody();
                 showModal(winModalId)
             }
