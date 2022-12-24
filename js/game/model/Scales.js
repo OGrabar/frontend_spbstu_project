@@ -7,14 +7,14 @@ export default class Scales {
 
     constructor(level) {
         this.baseImg = new Image();
-        this.baseImg.src = "../../assets/img/libra-center.png";
+        this.baseImg.src = "../assets/img/libra-center.png";
         this.baseImgWidth = 0;
         this.baseImgHeight = 0;
         this.baseImgX = 0;
         this.baseImgY = 0;
 
         this.leftScaleImg = new Image();
-        this.leftScaleImg.src = "../../assets/img/libra-left.png";
+        this.leftScaleImg.src = "../assets/img/libra-left.png";
         this.leftScaleX = 0;
         this.leftScaleY = 0;
         this.leftWeight = [new Weight(level)];
