@@ -22,7 +22,7 @@ export default class Scales {
         this.rightScaleImg = new Image();
         this.rightScaleX = 0;
         this.rightScaleY = 0;
-        this.rightScaleImg.src = "../../assets/img/libra-right.png";
+        this.rightScaleImg.src = "../assets/img/libra-right.png";
         let weight = new Weight(level);
         while (this.leftWeight[0].weight === weight.weight) {
             weight = new Weight(level);
