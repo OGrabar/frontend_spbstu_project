@@ -29,10 +29,7 @@ const userName = getAuthUserName();
 const userData = localStorage.getItem(userName);
 const userParsedData = JSON.parse(userData);
 
-const body = document.getElementById('body');
-
-
-body.onload = () => {
+window.onload = () => {
     if (!userName) {
         goToLogin();
     }
@@ -165,7 +162,7 @@ function setResultToModalBody() {
 }
 
 const audio = document.getElementById('audio');
-const audioRange = document.getElementById('range');
+const audioRange = document.getElementById('audioRange');
 audioRange.onchange = function () {
     if (this.value === this.min) {
         audio.volume = 0;
