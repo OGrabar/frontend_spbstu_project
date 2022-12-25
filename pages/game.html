@@ -67,7 +67,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="rules_modal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="rules_modal" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -77,7 +77,15 @@
                 </button>
             </div>
             <div class="modal-body">
-                ...
+                <ul class="list-group">
+                    <li class="list-group-item">Целью данной игры является уравновешивание чаш весов при помощи гирек за отведенное время</li>
+                    <li class="list-group-item">Вес гирьки указан на ней самой. С уровнем диапазон весов расширяется</li>
+                    <li class="list-group-item">Максимально на чаше может быть три гирьки. При попытке добавить четвертую игрок проигрывает</li>
+                    <li class="list-group-item">Гирьку можно положить на стол (максимум три штуки) и убрать со стола</li>
+                    <li class="list-group-item">При попытке положить гирьку на заполненный стол она заменит одну из лежащих</li>
+                    <li class="list-group-item">Всего три уровня. Для победы нужно пройти все из них.</li>
+                    <li class="list-group-item">Уровень можно начать проходить заново, но с каждой попыткой количество очков за него будет уменьшаться кратно числу попыток</li>
+                </ul>
             </div>
         </div>
     </div>
