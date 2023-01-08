@@ -12,13 +12,22 @@ export default class Weight {
         this.height = 0;
 
         this.isSelected = false;
+
+        this.shouldBeRemoved = false;
+        this.opacity = 1;
     }
 
     draw(ctx, canvasCoefficient) {
         this.updateWidthAndHeight(canvasCoefficient);
+        if (this.shouldBeRemoved) {
+            this.opacity -= 0.05;
+            this.opacity = Math.max(this.opacity, 0);
+            ctx.globalAlpha = this.opacity;
+        }
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
         ctx.fillStyle = 'black';
         ctx.fillText(this.weight.toString(), this.x + (this.width / 2 - 5), this.y + (this.height - 10));
+        ctx.globalAlpha = 1;
     }
 
     updateWidthAndHeight(canvasCoefficient) {

@@ -382,11 +382,16 @@ function updateFrame() {
     }
 }
 
+let weightWasRemoved = false;
 function game() {
     timerIdHolder.timerId = setInterval(
         () => {
             timer.innerHTML = timerTemplate + formatTime(maxTime - (Date.now() - startTime));
             updateFrame();
+            if (level === 3 && !weightWasRemoved && Date.now() - startTime >= maxTime / 2) {
+                scales.leftWeight[0].shouldBeRemoved = true;
+                weightWasRemoved = true;
+            }
 
             if (Date.now() - startTime >= maxTime) {
                 clearInterval(timerIdHolder.timerId);

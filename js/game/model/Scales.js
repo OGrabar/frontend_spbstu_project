@@ -64,6 +64,10 @@ export default class Scales {
 
         ctx.drawImage(this.leftScaleImg, this.leftScaleX, this.leftScaleY, this.scaleImgWidth, this.scaleImgHeight);
 
+        if (this.leftWeight.length > 0 && this.leftWeight[0].shouldBeRemoved && this.leftWeight[0].opacity === 0) {
+            this.leftWeight.shift();
+        }
+
         this.leftWeight.forEach((weight, index) => {
             weight.x = this.leftScaleX + index * this.weightOffset * canvasCoefficient.horizontal;
             weight.y = this.leftScaleY - weight.height - 10;
